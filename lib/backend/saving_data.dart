@@ -9,11 +9,11 @@ final _box = Hive.box(boxName);
 final boxUser = Hive.box(userData);
 User creatingUser() {
   if (boxUser.isNotEmpty) {
-    final User1 = User(
+    final user1 = User(
         firstName: boxUser.get('fname'),
         lastName: boxUser.get('lname'),
         userID: boxUser.get('userID'));
-    return User1;
+    return user1;
   }
   return User(firstName: 'test', lastName: 'subject', userID: userID);
 }
@@ -39,7 +39,7 @@ void saveData(List<ChatModel> messages) {
   _box.put(userID, mainList);
 }
 
-List<ChatModel> deStructure(User user1, User Gemini) {
+List<ChatModel> deStructure(User user1, User gemini) {
   final listofMessage = _box.get(userID);
   List<ChatModel> listOfMessage = [];
   if (listofMessage != null) {
@@ -51,7 +51,7 @@ List<ChatModel> deStructure(User user1, User Gemini) {
             isSender: i[2],
             isWaiting: i[3],
             text: i[4],
-            user: i[2] ? user1 : Gemini);
+            user: i[2] ? user1 : gemini);
         listOfMessage.add(chatModel);
       } else {
         ChatModel chatModel = ChatModel(
@@ -59,7 +59,7 @@ List<ChatModel> deStructure(User user1, User Gemini) {
             isSender: i[2],
             isWaiting: i[3],
             text: i[4],
-            user: i[2] ? user1 : Gemini);
+            user: i[2] ? user1 : gemini);
         listOfMessage.add(chatModel);
       }
     }

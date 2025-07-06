@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-//import 'dart:io';
 import 'package:chatbot/main.dart';
 import 'package:chatbot/models/user_model.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
@@ -57,12 +56,14 @@ Future<ChatModel> sendImageData(ChatModel message, User gemin) async {
   await gemini.textAndImage(
       text: message.text,
       images: [message.file!.readAsBytesSync()]).then((value) {
-    log(value!.content!.parts![0].text.toString());
-    chatModel = ChatModel(
-        text: value!.content!.parts![0].text.toString(),
-        user: gemin,
-        createAt: DateTime.now(),
-        isSender: false);
+    if (value != null) {
+      log(value.content!.parts![0].text.toString());
+      chatModel = ChatModel(
+          text: value.content!.parts![0].text.toString(),
+          user: gemin,
+          createAt: DateTime.now(),
+          isSender: false);
+    }
   }).catchError((onError) {
     chatModel = ChatModel(
         text: 'unable to fetch data',

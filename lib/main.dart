@@ -1,7 +1,5 @@
-import 'package:chatbot/backend/saving_data.dart';
 import 'package:chatbot/bloc/bloc.dart';
-import 'package:chatbot/pages/homepage_1.dart';
-import 'package:chatbot/pages/login.dart';
+import 'package:chatbot/pages/splash_screen.dart';
 import 'package:chatbot/system/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,10 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) => MessageBloc(),
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: (boxUser.isEmpty || !boxUser.get('islogin'))
-                ? Login()
-                : HomePage()));
+        child: const MaterialApp(
+            debugShowCheckedModeBanner: false, home: SplashScreen()));
   }
 }

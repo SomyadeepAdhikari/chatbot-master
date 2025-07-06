@@ -1,7 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 class Butt extends StatelessWidget {
@@ -36,9 +34,9 @@ class Textfield extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
-          color: Color.fromARGB(255, 61, 62, 58)),
+          color: const Color.fromARGB(255, 61, 62, 58)),
       child: TextField(
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
         controller: controller,
         decoration: InputDecoration(
             border: InputBorder.none,
@@ -66,7 +64,7 @@ class MessageField extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               controller: controller,
               decoration: InputDecoration(
                   border: InputBorder.none,

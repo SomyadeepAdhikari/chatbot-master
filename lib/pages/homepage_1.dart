@@ -1,249 +1,255 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:chatbot/backend/saving_data.dart';
 import 'package:chatbot/backend/send_message.dart';
 import 'package:chatbot/bloc/bloc.dart';
 import 'package:chatbot/component/chats_box.dart';
-import 'package:chatbot/component/component.dart';
 import 'package:chatbot/models/chat_model.dart';
 import 'package:chatbot/models/user_model.dart';
 import 'package:chatbot/pages/image_page.dart';
-import 'package:chatbot/pages/login.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// ignore: must_be_immutable
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   late User user1;
-
-  User Gemini = User(firstName: 'Gemini', userID: '2');
+  final User gemini = User(firstName: 'Gemini', userID: '2');
   bool isWriting = false;
-
   final _controller = TextEditingController();
   final _scroll = ScrollController();
-
-  List<ChatModel> TextMessages = [];
-  HomePage({super.key});
+  List<ChatModel> textMessages = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appBar(context),
-        backgroundColor: const Color.fromARGB(255, 31, 31, 31),
-        body: SafeArea(
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: _modernAppBar(context),
+      ),
+      backgroundColor: const Color(0xFF232526),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF232526), Color(0xFF414345)],
+          ),
+        ),
+        child: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Expanded(child: BlocBuilder<MessageBloc, MessageState>(
+              Expanded(
+                child: BlocBuilder<MessageBloc, MessageState>(
                   builder: (context, state) {
-                if (state is InitialState) {
-                  user1 = creatingUser();
-                  TextMessages = deStructure(user1, Gemini);
-                  log('!');
-                  return ListView.builder(
-                      controller: _scroll,
-                      itemCount: TextMessages.length,
-                      itemBuilder: (context, index) {
-                        return ChatBox(
-                          chatModel: TextMessages[index],
-                        );
-                      });
-                } else if (state is SendingState) {
-                  saveData(TextMessages);
-                  log('!');
-                  return ListView.builder(
-                      controller: _scroll,
-                      itemCount: TextMessages.length,
-                      itemBuilder: (context, index) {
-                        return ChatBox(
-                          chatModel: TextMessages[index],
-                        );
-                      });
-                } else if (state is RecievingState) {
-                  log('@');
-                  ChatModel chatModel = ChatModel(
-                      text: 'text',
-                      user: Gemini,
-                      createAt: DateTime.now(),
-                      isWaiting: true,
-                      isSender: false);
-                  TextMessages.add(chatModel);
-                  return ListView.builder(
-                      controller: _scroll,
-                      itemCount: TextMessages.length,
-                      itemBuilder: (context, index) {
-                        return ChatBox(
-                          chatModel: TextMessages[index],
-                        );
-                      });
-                } else {
-                  if (TextMessages.length > 2) {
-                    TextMessages.removeAt(TextMessages.length - 2);
-                    saveData(TextMessages);
-                  }
-                  log('#');
-                  return ListView.builder(
-                      controller: _scroll,
-                      itemCount: TextMessages.length,
-                      itemBuilder: (context, index) {
-                        return ChatBox(
-                          chatModel: TextMessages[index],
-                        );
-                      });
-                }
-              })),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          scrollFun(_scroll);
-                        },
-                        icon: const Icon(Icons.arrow_downward)),
-                    Expanded(
-                        child: MessageField(
-                      buttonFunction: () async {
-                        var contextLocal = Navigator.of(context);
-                        FilePickerResult? result =
-                            await FilePicker.platform.pickFiles();
-
-                        if (result != null) {
-                          File file = File(result.files.single.path!);
-                          contextLocal.push(MaterialPageRoute(
-                              builder: ((context) => ImagePage(
-                                    file: file,
-                                    buttonFunction: () async {
-                                      final blocContext =
-                                          BlocProvider.of<MessageBloc>(context);
-                                      if (_controller.text.trim().isNotEmpty &&
-                                          !isWriting) {
-                                        Navigator.pop(context);
-                                        isWriting = true;
-                                        ChatModel message = ChatModel(
-                                            createAt: DateTime.now(),
-                                            text: _controller.text.trim(),
-                                            user: user1,
-                                            file: file);
-                                        _controller.clear();
-                                        TextMessages.add(message);
-                                        BlocProvider.of<MessageBloc>(context)
-                                            .add(DataSent());
-
-                                        log(TextMessages.toString());
-
-                                        BlocProvider.of<MessageBloc>(context)
-                                            .add(Pending());
-
-                                        TextMessages.add(await sendImageData(
-                                            message, Gemini));
-                                        log(TextMessages.toString());
-
-                                        blocContext.add(DataRecieving());
-                                      }
-                                      isWriting = false;
-                                    },
-                                    controller: _controller,
-                                  ))));
-                        } else {
-                          // User canceled the picker
-                        }
-                      },
-                      text: "Enter Message...",
-                      controller: _controller,
-                    )),
-                    IconButton(
-                        onPressed: () async {
-                          final blocContext =
-                              BlocProvider.of<MessageBloc>(context);
-                          if (_controller.text.trim().isNotEmpty &&
-                              !isWriting) {
-                            isWriting = true;
-                            ChatModel message = ChatModel(
-                              createAt: DateTime.now(),
-                              text: _controller.text.trim(),
-                              user: user1,
-                            );
-                            _controller.clear();
-                            TextMessages.add(message);
-                            BlocProvider.of<MessageBloc>(context)
-                                .add(DataSent());
-
-                            log(TextMessages.toString());
-
-                            BlocProvider.of<MessageBloc>(context)
-                                .add(Pending());
-
-                            TextMessages.add(await getdata(message, Gemini));
-                            log(TextMessages.toString());
-
-                            blocContext.add(DataRecieving());
-                          }
-                          isWriting = false;
-                        },
-                        icon: const Icon(Icons.send))
-                  ],
+                    if (state is InitialState) {
+                      user1 = creatingUser();
+                      textMessages = deStructure(user1, gemini);
+                      return _modernChatList();
+                    } else if (state is SendingState) {
+                      saveData(textMessages);
+                      return _modernChatList();
+                    } else if (state is RecievingState) {
+                      ChatModel chatModel = ChatModel(
+                        text: 'text',
+                        user: gemini,
+                        createAt: DateTime.now(),
+                        isWaiting: true,
+                        isSender: false,
+                      );
+                      textMessages.add(chatModel);
+                      return _modernChatList();
+                    } else {
+                      if (textMessages.length > 2) {
+                        textMessages.removeAt(textMessages.length - 2);
+                        saveData(textMessages);
+                      }
+                      return _modernChatList();
+                    }
+                  },
                 ),
-              )
+              ),
+              _modernMessageInput(context),
             ],
           ),
-        ));
-  }
-
-  AppBar appBar(BuildContext context) {
-    return AppBar(
-      actions: [
-        IconButton(
-            onPressed: () {
-              var route = MaterialPageRoute(builder: (builder) => Login());
-              boxUser.put('islogin', false);
-              Navigator.pushAndRemoveUntil(context, route, (route) => false);
-            },
-            icon: const Icon(Icons.logout)),
-        /* IconButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (builder) => PaymentPage()));
-            },
-            icon: const Icon(Icons.monetization_on)) */
-      ],
-      title: const Text("Gemini"),
-      foregroundColor: Colors.white,
-      leading: Image.asset('./assets/gemini.png'),
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF667eea),
+        child: const Icon(Icons.arrow_downward, color: Colors.white),
+        onPressed: () {
+          scrollFun(_scroll);
+        },
+      ),
     );
   }
 
-  void simpleFunc(context) async {
-    final blocContext = BlocProvider.of<MessageBloc>(context);
-    if (_controller.text.trim().isNotEmpty && !isWriting) {
-      isWriting = true;
-      ChatModel message = ChatModel(
-        createAt: DateTime.now(),
-        text: _controller.text.trim(),
-        user: user1,
-      );
-      _controller.clear();
-      TextMessages.add(message);
-      BlocProvider.of<MessageBloc>(context).add(DataSent());
+  Widget _modernChatList() {
+    return ListView.builder(
+      controller: _scroll,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      itemCount: textMessages.length,
+      itemBuilder: (context, index) {
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: ChatBox(chatModel: textMessages[index]),
+        );
+      },
+    );
+  }
 
-      _scroll.animateTo(_scroll.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 50), curve: Curves.easeOut);
-      log(TextMessages.toString());
+  Widget _modernMessageInput(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
+      child: Material(
+        elevation: 8,
+        borderRadius: BorderRadius.circular(30),
+        color: Colors.white,
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.image, color: Color(0xFF667eea)),
+              onPressed: () async {
+                var contextLocal = Navigator.of(context);
+                FilePickerResult? result =
+                    await FilePicker.platform.pickFiles();
+                if (result != null) {
+                  File file = File(result.files.single.path!);
+                  contextLocal.push(MaterialPageRoute(
+                    builder: ((context) => ImagePage(
+                          file: file,
+                          buttonFunction: () async {
+                            final blocContext =
+                                BlocProvider.of<MessageBloc>(context);
+                            if (_controller.text.trim().isNotEmpty &&
+                                !isWriting) {
+                              Navigator.pop(context);
+                              isWriting = true;
+                              ChatModel message = ChatModel(
+                                createAt: DateTime.now(),
+                                text: _controller.text.trim(),
+                                user: user1,
+                                file: file,
+                              );
+                              _controller.clear();
+                              textMessages.add(message);
+                              BlocProvider.of<MessageBloc>(context)
+                                  .add(DataSent());
+                              BlocProvider.of<MessageBloc>(context)
+                                  .add(Pending());
+                              textMessages
+                                  .add(await sendImageData(message, gemini));
+                              blocContext.add(DataRecieving());
+                            }
+                            isWriting = false;
+                          },
+                          controller: _controller,
+                        )),
+                  ));
+                }
+              },
+            ),
+            Expanded(
+              child: TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  hintText: "Type a message...",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                ),
+                minLines: 1,
+                maxLines: 4,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.send, color: Colors.white, size: 32),
+              tooltip: 'Send',
+              color: const Color(0xFF667eea),
+              padding: const EdgeInsets.all(8),
+              style: ButtonStyle(
+                backgroundColor:
+                    WidgetStatePropertyAll(const Color(0xFF667eea)),
+                shape: WidgetStatePropertyAll(const CircleBorder()),
+                elevation: WidgetStatePropertyAll(4),
+              ),
+              onPressed: () async {
+                final blocContext = BlocProvider.of<MessageBloc>(context);
+                if (_controller.text.trim().isNotEmpty && !isWriting) {
+                  isWriting = true;
+                  ChatModel message = ChatModel(
+                    createAt: DateTime.now(),
+                    text: _controller.text.trim(),
+                    user: user1,
+                  );
+                  _controller.clear();
+                  textMessages.add(message);
+                  BlocProvider.of<MessageBloc>(context).add(DataSent());
+                  BlocProvider.of<MessageBloc>(context).add(Pending());
+                  textMessages.add(await getdata(message, gemini));
+                  blocContext.add(DataRecieving());
+                }
+                isWriting = false;
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-      BlocProvider.of<MessageBloc>(context).add(Pending());
-
-      TextMessages.add(await getdata(message, Gemini));
-      log(TextMessages.toString());
-
-      blocContext.add(DataRecieving());
-    }
-    isWriting = false;
+  AppBar _modernAppBar(BuildContext context) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+          ),
+        ),
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
+      title: const Row(
+        children: [
+          CircleAvatar(
+            backgroundImage: AssetImage('assets/gemini.png'),
+            radius: 22,
+          ),
+          SizedBox(width: 12),
+          Text(
+            "Gemini Chat",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
 scrollFun(ScrollController scrollController) {
   scrollController.animateTo(scrollController.position.maxScrollExtent,
-      duration: const Duration(microseconds: 10), curve: Curves.easeOut);
+      duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
 }

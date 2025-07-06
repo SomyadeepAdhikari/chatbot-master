@@ -5,7 +5,7 @@ import 'package:chatbot/component/component.dart';
 import 'package:chatbot/pages/homepage_1.dart';
 import 'package:chatbot/system/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});

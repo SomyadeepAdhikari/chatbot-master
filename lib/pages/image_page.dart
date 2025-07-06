@@ -1,9 +1,7 @@
 import 'dart:io';
 
 import 'package:chatbot/component/component.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 // ignore: must_be_immutable
 class ImagePage extends StatelessWidget {
@@ -29,7 +27,7 @@ class ImagePage extends StatelessWidget {
           ),
         ),
       ),
-      Padding(padding: EdgeInsets.only(bottom: 50)),
+      const SizedBox(height: 50),
       Align(
         alignment: Alignment.bottomCenter,
         child: Material(
@@ -40,7 +38,8 @@ class ImagePage extends StatelessWidget {
                   child: Textfield(
                 controller: controller,
               )),
-              IconButton(onPressed: buttonFunction, icon: Icon(Icons.send))
+              IconButton(
+                  onPressed: buttonFunction, icon: const Icon(Icons.send))
             ],
           ),
         ),
