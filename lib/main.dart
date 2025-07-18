@@ -9,7 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:hive_flutter/adapters.dart';
 
-const apiKey = 'AIzaSyBang-K6X7vleMqIdp5BQH-E0W-0dO2TUM';
+// IMPORTANT: Replace this with your actual Gemini API key
+// Get your API key from: https://aistudio.google.com/app/apikey
+// The current key is invalid and needs to be replaced
+const apiKey = 'AIzaSyCuWlvIslpqKoIMYFohk0tP6-loQpdAeeA'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
