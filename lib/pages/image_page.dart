@@ -18,7 +18,7 @@ class ImagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(children: [
       Center(
-        child: Container(
+        child: SizedBox(
           width: 300,
           height: 300,
           child: Image.file(

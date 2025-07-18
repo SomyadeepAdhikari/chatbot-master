@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:chatbot/backend/saving_data.dart';
-import 'package:chatbot/backend/send_message.dart';
 import 'package:chatbot/bloc/bloc.dart';
-import 'package:chatbot/component/chats_box.dart';
+import 'package:chatbot/component/chats_box_clean.dart';
 import 'package:chatbot/components/modern_widgets.dart';
-import 'package:chatbot/main.dart';
 import 'package:chatbot/models/chat_model.dart';
 import 'package:chatbot/models/user_model.dart';
 import 'package:chatbot/pages/image_page.dart';
@@ -494,411 +492,136 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _buildInputArea() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Modern floating input container
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                  blurRadius: 32,
-                  offset: const Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
+      margin: const EdgeInsets.all(16),
+      child: ModernCard(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: _pickImage,
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).colorScheme.surfaceContainer.withValues(alpha: 0.9),
-                        Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-                      width: 1,
-                    ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                    child: Row(
-                      children: [
-                        // Attachment button
-                        _buildAttachmentButton(),
-                        const SizedBox(width: 8),
-                        // Text input field
-                        Expanded(child: _buildTextInput()),
-                        const SizedBox(width: 8),
-                        // Voice/Send button
-                        _buildActionButton(),
-                      ],
-                    ),
+                  child: Icon(
+                    Icons.add_photo_alternate_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
                   ),
                 ),
               ),
-            ),
-          ),
-          // Quick actions
-          _buildQuickActions(),
-        ],
-      ),
-    ).animate()
-      .slideY(begin: 1, end: 0, duration: 600.ms, curve: Curves.easeOutCubic)
-      .fadeIn(duration: 400.ms);
-  }
-
-  Widget _buildAttachmentButton() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _pickImage,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: Icon(
-              Icons.add_photo_alternate_rounded,
-              color: Theme.of(context).colorScheme.primary,
-              size: 20,
-            ),
-          ),
-        ),
-      ),
-    ).animate(delay: 200.ms)
-      .scale(begin: const Offset(0.8, 0.8), duration: 300.ms, curve: Curves.easeOutBack)
-      .fadeIn(duration: 200.ms);
-  }
-
-  Widget _buildTextInput() {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 40),
-      child: TextField(
-        controller: controller,
-        style: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.onSurface,
-          height: 1.4,
-        ),
-        decoration: InputDecoration(
-          hintText: 'Ask me anything...',
-          hintStyle: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-          ),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.3),
-        ),
-        maxLines: null,
-        textInputAction: TextInputAction.send,
-        onSubmitted: (_) => _sendMessage(),
-        cursorColor: Theme.of(context).colorScheme.primary,
-        cursorWidth: 2,
-        cursorHeight: 20,
-      ),
-    );
-  }
-
-  Widget _buildActionButton() {
-    return BlocBuilder<MessageBloc, MessageState>(
-      builder: (context, state) {
-        final isLoading = state is SendingState || state is RecievingState;
-        final hasText = controller.text.trim().isNotEmpty;
-
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: hasText && !isLoading ? AppTheme.primaryGradient : null,
-              color: !hasText || isLoading 
-                  ? Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-                  : null,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: hasText && !isLoading 
-                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
-                    : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
-                width: 1,
-              ),
-              boxShadow: hasText && !isLoading ? [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                  spreadRadius: 0,
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Ask me anything...',
+                    hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  maxLines: null,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => _sendMessage(),
                 ),
-              ] : null,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: isLoading ? null : (hasText ? _sendMessage : _startVoiceInput),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  child: isLoading
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        )
-                      : Icon(
-                          hasText ? Icons.send_rounded : Icons.mic_rounded,
-                          color: hasText && !isLoading 
-                              ? Colors.white 
-                              : Theme.of(context).colorScheme.primary,
-                          size: 20,
+              ),
+              const SizedBox(width: 8),
+              BlocBuilder<MessageBloc, MessageState>(
+                builder: (context, state) {
+                  final isLoading =
+                      state is SendingState || state is RecievingState;
+
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    child: IconButton(
+                      onPressed: isLoading ? null : _sendMessage,
+                      icon: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          gradient: isLoading ? null : AppTheme.primaryGradient,
+                          color: isLoading
+                              ? Theme.of(context).colorScheme.outline
+                              : null,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: isLoading
+                              ? null
+                              : [
+                                  BoxShadow(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withValues(alpha: 0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                         ),
-                ),
+                        child: isLoading
+                            ? SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                                ),
+                              )
+                            : const Icon(
+                                Icons.send_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                      ),
+                    ),
+                  );
+                },
               ),
-            ),
+            ],
           ),
-        ).animate(delay: 300.ms)
-          .scale(begin: const Offset(0.8, 0.8), duration: 400.ms, curve: Curves.easeOutBack)
-          .fadeIn(duration: 300.ms);
-      },
-    );
-  }
-
-  Widget _buildQuickActions() {
-    final suggestions = [
-      {'icon': Icons.lightbulb_outline_rounded, 'text': 'Ideas'},
-      {'icon': Icons.help_outline_rounded, 'text': 'Help'},
-      {'icon': Icons.trending_up_rounded, 'text': 'Trends'},
-    ];
-
-    return Container(
-      margin: const EdgeInsets.only(top: 12),
-      height: 40,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        itemCount: suggestions.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final suggestion = suggestions[index];
-          return Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainer.withValues(alpha: 0.6),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-                width: 1,
-              ),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => _showIdeasMenu(suggestion['text'] as String),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        suggestion['icon'] as IconData,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        suggestion['text'] as String,
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ).animate(delay: Duration(milliseconds: 400 + (index * 100)))
-            .slideX(begin: 0.3, duration: 300.ms, curve: Curves.easeOutCubic)
-            .fadeIn(duration: 200.ms);
-        },
-      ),
-    );
-  }
-
-  void _startVoiceInput() {
-    // Voice input functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Voice input feature coming soon!',
-          style: GoogleFonts.inter(),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  void _showIdeasMenu(String type) {
-    final ideas = {
-      'Ideas': [
-        'Create a story about...',
-        'Explain quantum physics',
-        'Plan a weekend trip',
-        'Help with coding',
-      ],
-      'Help': [
-        'How to use this app?',
-        'What can you do?',
-        'Privacy settings',
-        'Report an issue',
-      ],
-      'Trends': [
-        'Latest AI developments',
-        'Tech trends 2024',
-        'Popular topics',
-        'News summary',
-      ],
-    };
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              type,
-              style: GoogleFonts.inter(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ...ideas[type]!.map((idea) => ListTile(
-              title: Text(
-                idea,
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              onTap: () {
-                controller.text = idea;
-                Navigator.pop(context);
-              },
-            )),
-          ],
         ),
       ),
-    );
+    )
+        .animate()
+        .slideY(begin: 1, end: 0, duration: 400.ms, curve: Curves.easeOut)
+        .fadeIn(duration: 400.ms);
   }
 
-  void _sendMessage() async {
+  void _sendMessage() {
     if (controller.text.trim().isEmpty) return;
 
-    final userMessage = ChatModel(
+    final message = ChatModel(
       text: controller.text.trim(),
       user: user1,
       createAt: DateTime.now(),
     );
 
-    // Add debugging
-    print('Sending message: ${userMessage.text}');
-    print('API Key length: ${apiKey.length}');
-    print('API Key starts with: ${apiKey.substring(0, 10)}...');
-
     context.read<MessageBloc>().add(DataSent());
 
     setState(() {
-      allMessages.add(userMessage);
+      allMessages.add(message);
     });
 
     controller.clear();
     _scrollToBottom();
-
-    // Get AI response
-    try {
-      context.read<MessageBloc>().add(Pending());
-      
-      // Try the primary method first
-      ChatModel aiResponse;
-      try {
-        aiResponse = await getdata(userMessage, gemini);
-      } catch (e) {
-        // If primary method fails, try HTTP fallback
-        print('Primary method failed, trying HTTP fallback: $e');
-        aiResponse = await getdataHttp(userMessage, gemini);
-      }
-      
-      context.read<MessageBloc>().add(DataRecieving());
-      
-      setState(() {
-        allMessages.add(aiResponse);
-      });
-      
-      _scrollToBottom();
-    } catch (e) {
-      print('All methods failed: $e');
-      context.read<MessageBloc>().add(DataRecieving());
-      
-      final errorMessage = ChatModel(
-        text: 'Sorry, I encountered an error. Please check your internet connection and try again.',
-        user: gemini,
-        createAt: DateTime.now(),
-        isSender: false,
-      );
-      
-      setState(() {
-        allMessages.add(errorMessage);
-      });
-      
-      _scrollToBottom();
-    }
   }
 
   void _pickImage() async {
@@ -910,7 +633,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       if (result != null && result.files.single.path != null) {
         final file = File(result.files.single.path!);
-        final imageController = TextEditingController();
 
         if (mounted) {
           Navigator.push(
@@ -918,8 +640,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             MaterialPageRoute(
               builder: (context) => ImagePage(
                 file: file,
-                buttonFunction: () => _sendImageMessage(file, imageController),
-                controller: imageController,
+                buttonFunction: () {},
+                controller: TextEditingController(),
               ),
             ),
           );
@@ -927,60 +649,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
     } catch (e) {
       _showErrorSnackBar('Error picking image: $e');
-    }
-  }
-
-  void _sendImageMessage(File imageFile, TextEditingController imageController) async {
-    if (imageController.text.trim().isEmpty) {
-      _showErrorSnackBar('Please enter a message with your image');
-      return;
-    }
-
-    final userMessage = ChatModel(
-      text: imageController.text.trim(),
-      user: user1,
-      createAt: DateTime.now(),
-      file: imageFile,
-    );
-
-    context.read<MessageBloc>().add(DataSent());
-
-    setState(() {
-      allMessages.add(userMessage);
-    });
-
-    imageController.clear();
-    Navigator.pop(context); // Close the image page
-    _scrollToBottom();
-
-    // Get AI response for image
-    try {
-      context.read<MessageBloc>().add(Pending());
-      
-      final aiResponse = await sendImageData(userMessage, gemini);
-      
-      context.read<MessageBloc>().add(DataRecieving());
-      
-      setState(() {
-        allMessages.add(aiResponse);
-      });
-      
-      _scrollToBottom();
-    } catch (e) {
-      context.read<MessageBloc>().add(DataRecieving());
-      
-      final errorMessage = ChatModel(
-        text: 'Sorry, I encountered an error processing your image. Please try again.',
-        user: gemini,
-        createAt: DateTime.now(),
-        isSender: false,
-      );
-      
-      setState(() {
-        allMessages.add(errorMessage);
-      });
-      
-      _scrollToBottom();
     }
   }
 

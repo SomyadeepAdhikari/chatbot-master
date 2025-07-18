@@ -28,7 +28,8 @@ class ChatsBox extends StatelessWidget {
         bottom: 16,
       ),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (isGemini) ...[
@@ -37,7 +38,8 @@ class ChatsBox extends StatelessWidget {
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 _buildMessageBubble(context, isUser),
                 const SizedBox(height: 4),
@@ -51,14 +53,12 @@ class ChatsBox extends StatelessWidget {
           ],
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 300.ms)
-      .slideX(
-        begin: isUser ? 0.3 : -0.3,
-        end: 0,
-        duration: 400.ms,
-        curve: Curves.easeOut,
-      );
+    ).animate().fadeIn(duration: 300.ms).slideX(
+          begin: isUser ? 0.3 : -0.3,
+          end: 0,
+          duration: 400.ms,
+          curve: Curves.easeOut,
+        );
   }
 
   Widget _buildAvatar(BuildContext context, bool isUser) {
@@ -66,16 +66,15 @@ class ChatsBox extends StatelessWidget {
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        gradient: isUser 
-          ? AppTheme.userMessageGradient 
-          : AppTheme.primaryGradient,
+        gradient:
+            isUser ? AppTheme.userMessageGradient : AppTheme.primaryGradient,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: (isUser 
-              ? Theme.of(context).colorScheme.secondary
-              : Theme.of(context).colorScheme.primary
-            ).withValues(alpha: 0.3),
+            color: (isUser
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.primary)
+                .withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -95,12 +94,13 @@ class ChatsBox extends StatelessWidget {
         maxWidth: MediaQuery.of(context).size.width * 0.75,
       ),
       decoration: BoxDecoration(
-        gradient: isUser 
-          ? AppTheme.userMessageGradient
-          : null,
-        color: isUser 
-          ? null 
-          : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
+        gradient: isUser ? AppTheme.userMessageGradient : null,
+        color: isUser
+            ? null
+            : Theme.of(context)
+                .colorScheme
+                .surfaceContainerHighest
+                .withValues(alpha: 0.8),
         borderRadius: BorderRadius.only(
           topLeft: const Radius.circular(20),
           topRight: const Radius.circular(20),
@@ -114,10 +114,15 @@ class ChatsBox extends StatelessWidget {
             offset: const Offset(0, 2),
           ),
         ],
-        border: isUser ? null : Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-          width: 1,
-        ),
+        border: isUser
+            ? null
+            : Border.all(
+                color: Theme.of(context)
+                    .colorScheme
+                    .outline
+                    .withValues(alpha: 0.2),
+                width: 1,
+              ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.only(
@@ -131,9 +136,9 @@ class ChatsBox extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isUser 
-                ? Colors.white.withValues(alpha: 0.1)
-                : Colors.transparent,
+              color: isUser
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.transparent,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,9 +153,9 @@ class ChatsBox extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: isUser 
-                        ? Colors.white
-                        : Theme.of(context).colorScheme.onSurface,
+                      color: isUser
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.onSurface,
                       height: 1.4,
                     ),
                   ),
@@ -164,7 +169,7 @@ class ChatsBox extends StatelessWidget {
 
   Widget _buildImagePreview(BuildContext context) {
     if (message.file == null) return const SizedBox.shrink();
-    
+
     return Container(
       height: 200,
       width: double.infinity,
@@ -203,7 +208,10 @@ class ChatsBox extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          color: Theme.of(context)
+              .colorScheme
+              .onSurfaceVariant
+              .withValues(alpha: 0.7),
         ),
       ),
     );

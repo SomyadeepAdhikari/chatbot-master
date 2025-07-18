@@ -5,7 +5,6 @@ import 'package:chatbot/backend/send_message.dart';
 import 'package:chatbot/bloc/bloc.dart';
 import 'package:chatbot/component/chats_box.dart';
 import 'package:chatbot/components/modern_widgets.dart';
-import 'package:chatbot/main.dart';
 import 'package:chatbot/models/chat_model.dart';
 import 'package:chatbot/models/user_model.dart';
 import 'package:chatbot/pages/image_page.dart';
@@ -24,7 +23,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with TickerProviderStateMixin {
   late User user1;
   final User gemini = User(firstName: 'Gemini', userID: '2');
   late List<ChatModel> allMessages;
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
     controller = TextEditingController();
     scrollController = ScrollController();
-
+    
     // Initialize animations
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-
+    
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       parent: _fadeController,
       curve: Curves.easeOut,
     ));
-
+    
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
@@ -159,10 +159,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
               border: Border(
                 bottom: BorderSide(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .outline
-                      .withValues(alpha: 0.2),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                   width: 0.5,
                 ),
               ),
@@ -180,10 +177,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: 0.3),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -225,10 +219,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerHighest
-                  .withValues(alpha: 0.6),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -257,9 +248,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             position: _slideAnimation,
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: allMessages.isEmpty
-                  ? _buildEmptyState()
-                  : _buildMessagesList(state),
+              child: allMessages.isEmpty 
+                ? _buildEmptyState()
+                : _buildMessagesList(state),
             ),
           ),
         );
@@ -280,10 +271,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: 0.3),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -294,11 +282,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               size: 60,
               color: Colors.white,
             ),
-          )
-              .animate()
-              .scale(delay: 200.ms, duration: 600.ms, curve: Curves.elasticOut)
-              .shimmer(delay: 800.ms, duration: 1000.ms),
+          ).animate()
+            .scale(delay: 200.ms, duration: 600.ms, curve: Curves.elasticOut)
+            .shimmer(delay: 800.ms, duration: 1000.ms),
+          
           const SizedBox(height: 32),
+          
           Text(
             'Welcome to Gemini AI',
             style: GoogleFonts.inter(
@@ -306,11 +295,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               fontWeight: FontWeight.w700,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-          )
-              .animate()
-              .fadeIn(delay: 400.ms, duration: 600.ms)
-              .slideY(begin: 0.3, end: 0),
+          ).animate()
+            .fadeIn(delay: 400.ms, duration: 600.ms)
+            .slideY(begin: 0.3, end: 0),
+          
           const SizedBox(height: 12),
+          
           Text(
             'Start a conversation and explore the possibilities',
             textAlign: TextAlign.center,
@@ -319,11 +309,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               fontWeight: FontWeight.w400,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-          )
-              .animate()
-              .fadeIn(delay: 600.ms, duration: 600.ms)
-              .slideY(begin: 0.3, end: 0),
+          ).animate()
+            .fadeIn(delay: 600.ms, duration: 600.ms)
+            .slideY(begin: 0.3, end: 0),
+          
           const SizedBox(height: 32),
+          
           _buildSuggestionChips(),
         ],
       ),
@@ -344,7 +335,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: suggestions.asMap().entries.map((entry) {
         final index = entry.key;
         final suggestion = entry.value;
-
+        
         return InkWell(
           onTap: () {
             controller.text = suggestion;
@@ -353,16 +344,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerHighest
-                  .withValues(alpha: 0.6),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Theme.of(context)
-                    .colorScheme
-                    .outline
-                    .withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
               ),
             ),
             child: Text(
@@ -374,10 +359,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
           ),
-        )
-            .animate()
-            .fadeIn(delay: (800 + index * 100).ms, duration: 600.ms)
-            .slideY(begin: 0.3, end: 0);
+        ).animate()
+          .fadeIn(delay: (800 + index * 100).ms, duration: 600.ms)
+          .slideY(begin: 0.3, end: 0);
       }).toList(),
     );
   }
@@ -387,9 +371,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: ListView.builder(
         controller: scrollController,
         padding: const EdgeInsets.symmetric(vertical: 16),
-        itemCount: allMessages.length +
-            (state is SendingState ? 1 : 0) +
-            (state is RecievingState ? 1 : 0),
+        itemCount: allMessages.length + (state is SendingState ? 1 : 0) + (state is RecievingState ? 1 : 0),
         itemBuilder: (context, index) {
           if (index < allMessages.length) {
             return AnimationConfiguration.staggeredList(
@@ -400,9 +382,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 child: FadeInAnimation(
                   child: ChatsBox(
                     message: allMessages[index],
-                    user: allMessages[index].user.userID == user1.userID
-                        ? user1
-                        : gemini,
+                    user: allMessages[index].user.userID == user1.userID ? user1 : gemini,
                   ),
                 ),
               ),
@@ -426,8 +406,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         bottom: 16,
       ),
       child: Row(
-        mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!isUser) ...[
             Container(
@@ -448,9 +427,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isUser
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: isUser 
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -469,20 +448,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     height: 6,
                     margin: EdgeInsets.only(right: index < 2 ? 4 : 0),
                     decoration: BoxDecoration(
-                      color: isUser
-                          ? Colors.white
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: isUser ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
                       borderRadius: BorderRadius.circular(3),
                     ),
-                  )
-                      .animate(
-                        onPlay: (controller) => controller.repeat(),
-                      )
-                      .scale(
-                        duration: 600.ms,
-                        delay: (index * 200).ms,
-                        curve: Curves.easeInOut,
-                      );
+                  ).animate(
+                    onPlay: (controller) => controller.repeat(),
+                  ).scale(
+                    begin: const Offset(0.8, 0.8),
+                    end: const Offset(1.2, 1.2),
+                    duration: 600.ms,
+                    delay: (index * 200).ms,
+                    curve: Curves.easeInOut,
+                  );
                 }),
               ],
             ),
@@ -494,348 +471,103 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _buildInputArea() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Modern floating input container
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                  blurRadius: 32,
-                  offset: const Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
+      margin: const EdgeInsets.all(16),
+      child: ModernCard(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: _pickImage,
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).colorScheme.surfaceContainer.withValues(alpha: 0.9),
-                        Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-                      width: 1,
-                    ),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                    child: Row(
-                      children: [
-                        // Attachment button
-                        _buildAttachmentButton(),
-                        const SizedBox(width: 8),
-                        // Text input field
-                        Expanded(child: _buildTextInput()),
-                        const SizedBox(width: 8),
-                        // Voice/Send button
-                        _buildActionButton(),
-                      ],
-                    ),
+                  child: Icon(
+                    Icons.add_photo_alternate_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
                   ),
                 ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Ask me anything...',
+                    hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  maxLines: null,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => _sendMessage(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              BlocBuilder<MessageBloc, MessageState>(
+                builder: (context, state) {
+                  final isLoading = state is SendingState || state is RecievingState;
+                  
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    child: IconButton(
+                      onPressed: isLoading ? null : _sendMessage,
+                      icon: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          gradient: isLoading ? null : AppTheme.primaryGradient,
+                          color: isLoading ? Theme.of(context).colorScheme.outline : null,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: isLoading ? null : [
+                            BoxShadow(
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: isLoading
+                          ? SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            )
+                          : const Icon(
+                              Icons.send_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-          // Quick actions
-          _buildQuickActions(),
-        ],
+        ),
       ),
     ).animate()
-      .slideY(begin: 1, end: 0, duration: 600.ms, curve: Curves.easeOutCubic)
+      .slideY(begin: 1, end: 0, duration: 400.ms, curve: Curves.easeOut)
       .fadeIn(duration: 400.ms);
-  }
-
-  Widget _buildAttachmentButton() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _pickImage,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: Icon(
-              Icons.add_photo_alternate_rounded,
-              color: Theme.of(context).colorScheme.primary,
-              size: 20,
-            ),
-          ),
-        ),
-      ),
-    ).animate(delay: 200.ms)
-      .scale(begin: const Offset(0.8, 0.8), duration: 300.ms, curve: Curves.easeOutBack)
-      .fadeIn(duration: 200.ms);
-  }
-
-  Widget _buildTextInput() {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 40),
-      child: TextField(
-        controller: controller,
-        style: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.onSurface,
-          height: 1.4,
-        ),
-        decoration: InputDecoration(
-          hintText: 'Ask me anything...',
-          hintStyle: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-          ),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.3),
-        ),
-        maxLines: null,
-        textInputAction: TextInputAction.send,
-        onSubmitted: (_) => _sendMessage(),
-        cursorColor: Theme.of(context).colorScheme.primary,
-        cursorWidth: 2,
-        cursorHeight: 20,
-      ),
-    );
-  }
-
-  Widget _buildActionButton() {
-    return BlocBuilder<MessageBloc, MessageState>(
-      builder: (context, state) {
-        final isLoading = state is SendingState || state is RecievingState;
-        final hasText = controller.text.trim().isNotEmpty;
-
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: hasText && !isLoading ? AppTheme.primaryGradient : null,
-              color: !hasText || isLoading 
-                  ? Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-                  : null,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: hasText && !isLoading 
-                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
-                    : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
-                width: 1,
-              ),
-              boxShadow: hasText && !isLoading ? [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-              ] : null,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: isLoading ? null : (hasText ? _sendMessage : _startVoiceInput),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  child: isLoading
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        )
-                      : Icon(
-                          hasText ? Icons.send_rounded : Icons.mic_rounded,
-                          color: hasText && !isLoading 
-                              ? Colors.white 
-                              : Theme.of(context).colorScheme.primary,
-                          size: 20,
-                        ),
-                ),
-              ),
-            ),
-          ),
-        ).animate(delay: 300.ms)
-          .scale(begin: const Offset(0.8, 0.8), duration: 400.ms, curve: Curves.easeOutBack)
-          .fadeIn(duration: 300.ms);
-      },
-    );
-  }
-
-  Widget _buildQuickActions() {
-    final suggestions = [
-      {'icon': Icons.lightbulb_outline_rounded, 'text': 'Ideas'},
-      {'icon': Icons.help_outline_rounded, 'text': 'Help'},
-      {'icon': Icons.trending_up_rounded, 'text': 'Trends'},
-    ];
-
-    return Container(
-      margin: const EdgeInsets.only(top: 12),
-      height: 40,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        itemCount: suggestions.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final suggestion = suggestions[index];
-          return Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainer.withValues(alpha: 0.6),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-                width: 1,
-              ),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => _showIdeasMenu(suggestion['text'] as String),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        suggestion['icon'] as IconData,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        suggestion['text'] as String,
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ).animate(delay: Duration(milliseconds: 400 + (index * 100)))
-            .slideX(begin: 0.3, duration: 300.ms, curve: Curves.easeOutCubic)
-            .fadeIn(duration: 200.ms);
-        },
-      ),
-    );
-  }
-
-  void _startVoiceInput() {
-    // Voice input functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Voice input feature coming soon!',
-          style: GoogleFonts.inter(),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  void _showIdeasMenu(String type) {
-    final ideas = {
-      'Ideas': [
-        'Create a story about...',
-        'Explain quantum physics',
-        'Plan a weekend trip',
-        'Help with coding',
-      ],
-      'Help': [
-        'How to use this app?',
-        'What can you do?',
-        'Privacy settings',
-        'Report an issue',
-      ],
-      'Trends': [
-        'Latest AI developments',
-        'Tech trends 2024',
-        'Popular topics',
-        'News summary',
-      ],
-    };
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              type,
-              style: GoogleFonts.inter(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ...ideas[type]!.map((idea) => ListTile(
-              title: Text(
-                idea,
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              onTap: () {
-                controller.text = idea;
-                Navigator.pop(context);
-              },
-            )),
-          ],
-        ),
-      ),
-    );
   }
 
   void _sendMessage() async {
@@ -847,13 +579,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       createAt: DateTime.now(),
     );
 
-    // Add debugging
-    print('Sending message: ${userMessage.text}');
-    print('API Key length: ${apiKey.length}');
-    print('API Key starts with: ${apiKey.substring(0, 10)}...');
-
     context.read<MessageBloc>().add(DataSent());
-
+    
     setState(() {
       allMessages.add(userMessage);
     });
@@ -865,15 +592,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     try {
       context.read<MessageBloc>().add(Pending());
       
-      // Try the primary method first
-      ChatModel aiResponse;
-      try {
-        aiResponse = await getdata(userMessage, gemini);
-      } catch (e) {
-        // If primary method fails, try HTTP fallback
-        print('Primary method failed, trying HTTP fallback: $e');
-        aiResponse = await getdataHttp(userMessage, gemini);
-      }
+      final aiResponse = await getdata(userMessage, gemini);
       
       context.read<MessageBloc>().add(DataRecieving());
       
@@ -883,11 +602,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       
       _scrollToBottom();
     } catch (e) {
-      print('All methods failed: $e');
       context.read<MessageBloc>().add(DataRecieving());
       
       final errorMessage = ChatModel(
-        text: 'Sorry, I encountered an error. Please check your internet connection and try again.',
+        text: 'Sorry, I encountered an error. Please try again.',
         user: gemini,
         createAt: DateTime.now(),
         isSender: false,
@@ -911,7 +629,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (result != null && result.files.single.path != null) {
         final file = File(result.files.single.path!);
         final imageController = TextEditingController();
-
+        
         if (mounted) {
           Navigator.push(
             context,
@@ -998,10 +716,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurfaceVariant
-                      .withValues(alpha: 0.4),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -1065,8 +780,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('About Gemini AI'),
-        content: const Text(
-            'A modern AI chat application powered by Google Gemini.'),
+        content: const Text('A modern AI chat application powered by Google Gemini.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

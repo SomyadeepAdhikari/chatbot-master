@@ -2,10 +2,10 @@
 
 import 'package:chatbot/backend/saving_data.dart';
 import 'package:chatbot/component/component.dart';
-import 'package:chatbot/pages/homepage_1.dart';
 import 'package:chatbot/system/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import './homepage_1.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -83,6 +83,6 @@ class Login extends StatelessWidget {
 }
 
 pushing(context) {
-  final route = MaterialPageRoute(builder: (builder) => HomePage());
+  final route = MaterialPageRoute(builder: (builder) => const HomePage());
   Navigator.pushAndRemoveUntil(context, route, (route) => false);
 }
