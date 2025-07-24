@@ -1,4 +1,3 @@
-// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
 
 import 'package:chatbot/backend/saving_data.dart';
 import 'package:chatbot/component/component.dart';
