@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:hive_flutter/adapters.dart';
 
-const apiKey = 'AIzaSyCuWlvIslpqKoIMYFohk0tP6-loQpdAeeA'; 
+const apiKey = 'AIzaSyC99kfmGChH62Q9Agkt0iXPKcdB_vZNqf8'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

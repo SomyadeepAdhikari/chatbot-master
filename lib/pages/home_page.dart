@@ -592,7 +592,8 @@ class _HomePageState extends State<HomePage>
     try {
       context.read<MessageBloc>().add(Pending());
       
-      final aiResponse = await getdata(userMessage, gemini);
+  final aiResponse = await getdata(userMessage, gemini);
+  if (!mounted) return;
       
       context.read<MessageBloc>().add(DataRecieving());
       
@@ -675,7 +676,8 @@ class _HomePageState extends State<HomePage>
     try {
       context.read<MessageBloc>().add(Pending());
       
-      final aiResponse = await sendImageData(userMessage, gemini);
+  final aiResponse = await sendImageData(userMessage, gemini);
+  if (!mounted) return;
       
       context.read<MessageBloc>().add(DataRecieving());
       

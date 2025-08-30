@@ -847,10 +847,10 @@ class _HomePage1State extends State<HomePage1> with TickerProviderStateMixin {
       createAt: DateTime.now(),
     );
 
-    // Add debugging
-    print('Sending message: ${userMessage.text}');
-    print('API Key length: ${apiKey.length}');
-    print('API Key starts with: ${apiKey.substring(0, 10)}...');
+  // Add debugging
+  debugPrint('Sending message: ${userMessage.text}');
+  debugPrint('API Key length: ${apiKey.length}');
+  debugPrint('API Key starts with: ${apiKey.substring(0, 10)}...');
 
     context.read<MessageBloc>().add(DataSent());
 
@@ -868,11 +868,13 @@ class _HomePage1State extends State<HomePage1> with TickerProviderStateMixin {
       // Try the primary method first
       ChatModel aiResponse;
       try {
-        aiResponse = await getdata(userMessage, gemini);
+  aiResponse = await getdata(userMessage, gemini);
+  if (!mounted) return;
       } catch (e) {
-        // If primary method fails, try HTTP fallback
-        print('Primary method failed, trying HTTP fallback: $e');
-        aiResponse = await getdataHttp(userMessage, gemini);
+  // If primary method fails, try HTTP fallback
+  debugPrint('Primary method failed, trying HTTP fallback: $e');
+  aiResponse = await getdataHttp(userMessage, gemini);
+  if (!mounted) return;
       }
       
       context.read<MessageBloc>().add(DataRecieving());
@@ -883,7 +885,7 @@ class _HomePage1State extends State<HomePage1> with TickerProviderStateMixin {
       
       _scrollToBottom();
     } catch (e) {
-      print('All methods failed: $e');
+  debugPrint('All methods failed: $e');
       context.read<MessageBloc>().add(DataRecieving());
       
       final errorMessage = ChatModel(
@@ -957,7 +959,8 @@ class _HomePage1State extends State<HomePage1> with TickerProviderStateMixin {
     try {
       context.read<MessageBloc>().add(Pending());
       
-      final aiResponse = await sendImageData(userMessage, gemini);
+  final aiResponse = await sendImageData(userMessage, gemini);
+  if (!mounted) return;
       
       context.read<MessageBloc>().add(DataRecieving());
       

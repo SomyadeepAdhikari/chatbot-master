@@ -1,4 +1,4 @@
-import 'package:chatbot/pages/homepage_1.dart';
+import 'package:chatbot/pages/home_page.dart';
 import 'package:chatbot/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

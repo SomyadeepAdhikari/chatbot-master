@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Modern status bar style
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
         systemNavigationBarColor: Colors.transparent,
@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen>
   void _navigateToHome() {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const HomePage(),
+  pageBuilder: (context, animation, secondaryAnimation) => const HomePage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
             opacity: animation,
@@ -153,8 +153,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Widget _buildModernLogo() {
-    return Container(
-      child: Column(
+    return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Glassmorphic logo container
@@ -221,8 +220,7 @@ class _SplashScreenState extends State<SplashScreen>
               color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             ),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildModernText() {

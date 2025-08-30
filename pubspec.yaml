@@ -48,15 +48,34 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  image_path: assets/logo.png
+  android: "launcher_icon"
+  ios: true
+  web:
+    generate: true
+    image_path: assets/logo.png
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
+  windows:
+    generate: true
+    image_path: assets/logo.png
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: assets/logo.png
+  linux:
+    generate: true
+    image_path: assets/logo.png
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: assets/logo.png
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/
-    - assets/gemini.png
-    - assets/1.png
-    - assets/2.png
-    - assets/3.png
-    - assets/4.png
-    - assets/upi.jpg

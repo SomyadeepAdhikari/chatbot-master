@@ -1,27 +1,35 @@
-
 import 'package:chatbot/backend/saving_data.dart';
 import 'package:chatbot/component/component.dart';
-import 'package:chatbot/system/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import './homepage_1.dart';
+import 'package:chatbot/pages/home_page.dart';
 
-class Login extends StatelessWidget {
-  Login({super.key});
-  TextEditingController textEditingController = TextEditingController();
-  TextEditingController textEditingController1 = TextEditingController();
-  var output;
-  var box = Hive.box(boxName);
+class Login extends StatefulWidget {
+  const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final TextEditingController textEditingController = TextEditingController();
+  final TextEditingController textEditingController1 = TextEditingController();
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    textEditingController1.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 53, 53, 53),
       body: ListView(children: [
-        Container(
-            constraints: const BoxConstraints(maxHeight: 200, maxWidth: 100),
-            padding: const EdgeInsets.fromLTRB(0, 60, 0, 4),
-            child: Image.asset('./assets/gemini.png')),
+    Container(
+      constraints: const BoxConstraints(maxHeight: 200, maxWidth: 100),
+      padding: const EdgeInsets.fromLTRB(0, 60, 0, 4),
+      child: Image.asset('assets/gemini.png')),
         const Center(
             child: Text(
           'GEMINI AI',
