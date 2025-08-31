@@ -84,25 +84,25 @@ class ModernCard extends StatelessWidget {
     return Container(
       margin: margin,
       decoration: BoxDecoration(
-        borderRadius: borderRadius ?? BorderRadius.circular(20),
+        borderRadius: borderRadius ?? BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withValues(alpha: 0.3)
-                : Colors.black.withValues(alpha: 0.1),
-            blurRadius: elevation * 4,
-            offset: Offset(0, elevation),
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.black.withValues(alpha: 0.08),
+            blurRadius: elevation * 2,
+            offset: Offset(0, elevation * 0.5),
           ),
         ],
       ),
       child: Material(
         color: backgroundColor ?? Theme.of(context).cardColor,
-        borderRadius: borderRadius ?? BorderRadius.circular(20),
+        borderRadius: borderRadius ?? BorderRadius.circular(16),
         child: InkWell(
           onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadius.circular(20),
+          borderRadius: borderRadius ?? BorderRadius.circular(16),
           child: Container(
-            padding: padding ?? const EdgeInsets.all(16),
+            padding: padding ?? const EdgeInsets.all(12),
             child: child,
           ),
         ),

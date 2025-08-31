@@ -98,9 +98,11 @@ class AppTheme {
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
+      scrolledUnderElevation: 0,
+      foregroundColor: textPrimaryLight,
+      iconTheme: IconThemeData(color: textPrimaryLight),
       titleTextStyle: TextStyle(
-        color: Colors.white,
+        color: textPrimaryLight,
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
@@ -178,6 +180,7 @@ class AppTheme {
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
       elevation: 0,
+      scrolledUnderElevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
       titleTextStyle: TextStyle(
         color: Colors.white,

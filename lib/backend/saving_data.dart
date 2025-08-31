@@ -9,13 +9,17 @@ final _box = Hive.box(boxName);
 final boxUser = Hive.box(userData);
 User creatingUser() {
   if (boxUser.isNotEmpty) {
+    final firstName = boxUser.get('fname') as String? ?? 'User';
+    final lastName = boxUser.get('lname') as String? ?? '';
+    final userId = boxUser.get('userID') as String? ?? DateTime.now().toString();
+    
     final user1 = User(
-        firstName: boxUser.get('fname'),
-        lastName: boxUser.get('lname'),
-        userID: boxUser.get('userID'));
+        firstName: firstName,
+        lastName: lastName,
+        userID: userId);
     return user1;
   }
-  return User(firstName: 'test', lastName: 'subject', userID: userID);
+  return User(firstName: 'User', lastName: '', userID: DateTime.now().toString());
 }
 
 void savingUser(String fname, String lname) {
@@ -24,7 +28,7 @@ void savingUser(String fname, String lname) {
   boxUser.put('userID', DateTime.now().toString());
 }
 
-void saveData(List<ChatModel> messages) {
+void saveData(List<ChatModel> messages, String userID) {
   var mainList = [];
   for (var i in messages) {
     var emptyList = [
@@ -40,7 +44,7 @@ void saveData(List<ChatModel> messages) {
 }
 
 List<ChatModel> deStructure(User user1, User gemini) {
-  final listofMessage = _box.get(userID);
+  final listofMessage = _box.get(user1.userID);
   List<ChatModel> listOfMessage = [];
   if (listofMessage != null) {
     for (var i in listofMessage) {

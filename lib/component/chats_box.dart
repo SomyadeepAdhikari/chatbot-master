@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:chatbot/models/chat_model.dart';
 import 'package:chatbot/models/user_model.dart';
 import 'package:chatbot/theme/app_theme.dart';
+import 'package:chatbot/services/settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,8 +41,10 @@ class ChatsBox extends StatelessWidget {
               crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 _buildMessageBubble(context, isUser),
-                const SizedBox(height: 4),
-                _buildTimestamp(context, isUser),
+                if (_shouldShowTimestamp()) ...[
+                  const SizedBox(height: 4),
+                  _buildTimestamp(context, isUser),
+                ],
               ],
             ),
           ),
@@ -193,6 +196,10 @@ class ChatsBox extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool _shouldShowTimestamp() {
+    return SettingsService.showTimestamps;
   }
 
   Widget _buildTimestamp(BuildContext context, bool isUser) {

@@ -51,27 +51,27 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
-  image_path: assets/logo.png
+  image_path: assets/Logo.png
   android: "launcher_icon"
   ios: true
   web:
     generate: true
-    image_path: assets/logo.png
+    image_path: assets/Logo_windows_web.png
     background_color: "#FFFFFF"
     theme_color: "#FFFFFF"
   windows:
     generate: true
-    image_path: assets/logo.png
+    image_path: assets/Logo_windows_web.png
     icon_size: 48
   macos:
     generate: true
-    image_path: assets/logo.png
+    image_path: assets/Logo.png
   linux:
     generate: true
-    image_path: assets/logo.png
+    image_path: assets/Logo.png
   min_sdk_android: 21
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: assets/logo.png
+  adaptive_icon_foreground: assets/Logo.png
   remove_alpha_ios: true
 
 flutter:

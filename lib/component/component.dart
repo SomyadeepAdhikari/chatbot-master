@@ -31,17 +31,22 @@ class Textfield extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: const Color.fromARGB(255, 61, 62, 58)),
-      child: TextField(
-        style: const TextStyle(color: Colors.white),
-        controller: controller,
-        decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: text,
-            contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0)),
+    final scheme = Theme.of(context).colorScheme;
+    return TextField(
+      controller: controller,
+      style: TextStyle(color: scheme.onSurface),
+      decoration: InputDecoration(
+        hintText: text,
+        isDense: true,
+        filled: true,
+        fillColor: Theme.of(context).brightness == Brightness.dark
+            ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
+            : scheme.surfaceContainerHighest.withValues(alpha: 0.6),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
     );
   }
@@ -56,28 +61,35 @@ class MessageField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: const Color.fromARGB(255, 61, 62, 58)),
+        borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).brightness == Brightness.dark
+            ? scheme.surfaceContainerHighest.withValues(alpha: 0.2)
+            : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+      ),
       child: Row(
         children: [
           Expanded(
             child: TextField(
-              style: const TextStyle(color: Colors.white),
               controller: controller,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: text,
-                  contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0)),
+              style: TextStyle(color: scheme.onSurface),
+              decoration: const InputDecoration(
+                isDense: true,
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              ),
             ),
           ),
           IconButton(
-              onPressed: buttonFunction,
-              icon: const Icon(
-                Icons.file_copy,
-                size: 20,
-              ))
+            onPressed: buttonFunction,
+            icon: Icon(
+              Icons.file_copy,
+              size: 20,
+              color: scheme.onSurface.withValues(alpha: 0.8),
+            ),
+          )
         ],
       ),
     );

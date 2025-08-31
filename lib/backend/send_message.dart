@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:chatbot/main.dart';
 import 'package:chatbot/models/user_model.dart';
+import 'package:chatbot/services/settings_service.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:http/http.dart' as http;
 import 'package:chatbot/models/chat_model.dart';
@@ -53,8 +54,13 @@ Future<ChatModel> getdata(ChatModel message, User geminiUser) async {
 // Enhanced HTTP implementation with better error handling
 Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
   try {
+    // Get settings from SettingsService
+    final temperature = SettingsService.temperature;
+    final maxTokens = SettingsService.maxTokens;
+    final selectedModel = SettingsService.selectedModel;
+    
     const headers = {'Content-Type': 'application/json'};
-    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
+    final url = "https://generativelanguage.googleapis.com/v1beta/models/$selectedModel:generateContent?key=$apiKey";
 
     var body = {
       "contents": [
@@ -65,10 +71,10 @@ Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
         }
       ],
       "generationConfig": {
-        "temperature": 0.7,
+        "temperature": temperature,
         "topK": 1,
         "topP": 1,
-        "maxOutputTokens": 2048,
+        "maxOutputTokens": maxTokens,
       },
       "safetySettings": [
         {

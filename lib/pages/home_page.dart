@@ -8,6 +8,7 @@ import 'package:chatbot/components/modern_widgets.dart';
 import 'package:chatbot/models/chat_model.dart';
 import 'package:chatbot/models/user_model.dart';
 import 'package:chatbot/pages/image_page.dart';
+import 'package:chatbot/pages/settings_page.dart';
 import 'package:chatbot/theme/app_theme.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage>
     with TickerProviderStateMixin {
   late User user1;
   final User gemini = User(firstName: 'Gemini', userID: '2');
-  late List<ChatModel> allMessages;
+  List<ChatModel> allMessages = [];
   late TextEditingController controller;
   late ScrollController scrollController;
   late AnimationController _fadeController;
@@ -471,40 +472,44 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildInputArea() {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ModernCard(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
             children: [
               IconButton(
                 onPressed: _pickImage,
+                padding: const EdgeInsets.all(4),
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                 icon: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.add_photo_alternate_rounded,
                     color: Theme.of(context).colorScheme.primary,
-                    size: 20,
+                    size: 16,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               Expanded(
                 child: TextField(
                   controller: controller,
                   style: GoogleFonts.inter(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Ask me anything...',
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
                     hintStyle: GoogleFonts.inter(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -517,7 +522,7 @@ class _HomePageState extends State<HomePage>
                   onSubmitted: (_) => _sendMessage(),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               BlocBuilder<MessageBloc, MessageState>(
                 builder: (context, state) {
                   final isLoading = state is SendingState || state is RecievingState;
@@ -526,26 +531,28 @@ class _HomePageState extends State<HomePage>
                     duration: const Duration(milliseconds: 200),
                     child: IconButton(
                       onPressed: isLoading ? null : _sendMessage,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                       icon: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           gradient: isLoading ? null : AppTheme.primaryGradient,
                           color: isLoading ? Theme.of(context).colorScheme.outline : null,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(8),
                           boxShadow: isLoading ? null : [
                             BoxShadow(
-                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
                             ),
                           ],
                         ),
                         child: isLoading
                           ? SizedBox(
-                              width: 16,
-                              height: 16,
+                              width: 14,
+                              height: 14,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2,
+                                strokeWidth: 1.5,
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
@@ -554,7 +561,7 @@ class _HomePageState extends State<HomePage>
                           : const Icon(
                               Icons.send_rounded,
                               color: Colors.white,
-                              size: 18,
+                              size: 16,
                             ),
                       ),
                     ),
@@ -733,7 +740,12 @@ class _HomePageState extends State<HomePage>
                 title: const Text('Settings'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Add settings navigation
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SettingsPage(),
+                    ),
+                  );
                 },
               ),
               ListTile(
