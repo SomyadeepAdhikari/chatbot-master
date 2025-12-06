@@ -11,7 +11,7 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:chatbot/theme/theme_cubit.dart';
 
-const apiKey = 'AIzaSyC99kfmGChH62Q9Agkt0iXPKcdB_vZNqf8'; 
+const apiKey = 'AIzaSyDa5BRul6RbL4xfiEaudDxXaPlkdyytLzA'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

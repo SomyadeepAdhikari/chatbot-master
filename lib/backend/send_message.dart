@@ -11,15 +11,18 @@ import 'package:chatbot/models/chat_model.dart';
 Future<ChatModel> getdata(ChatModel message, User geminiUser) async {
   try {
     log('Attempting to send message to Gemini: ${message.text}');
-    
+
     // First try the flutter_gemini package
     final gemini = Gemini.instance;
     final response = await gemini.text(message.text);
-    
-    if (response != null && response.content != null && response.content!.parts != null) {
-      final responseText = response.content!.parts!.first.text ?? 'No response received';
+
+    if (response != null &&
+        response.content != null &&
+        response.content!.parts != null) {
+      final responseText =
+          response.content!.parts!.first.text ?? 'No response received';
       log('Gemini response received successfully');
-      
+
       return ChatModel(
         user: geminiUser,
         createAt: DateTime.now(),
@@ -32,16 +35,19 @@ Future<ChatModel> getdata(ChatModel message, User geminiUser) async {
     }
   } catch (e) {
     log('Flutter Gemini failed: $e');
-    
+
     // Check for specific error types
-    if (e.toString().contains('404') || e.toString().contains('validateStatus')) {
+    if (e.toString().contains('404') ||
+        e.toString().contains('validateStatus')) {
       log('API endpoint issue detected, trying HTTP fallback');
       return await getdataHttp(message, geminiUser);
-    } else if (e.toString().contains('API key') || e.toString().contains('INVALID_ARGUMENT')) {
+    } else if (e.toString().contains('API key') ||
+        e.toString().contains('INVALID_ARGUMENT')) {
       return ChatModel(
         user: geminiUser,
         createAt: DateTime.now(),
-        text: '🔑 Invalid API Key detected!\n\nTo fix this:\n1. Go to https://aistudio.google.com/app/apikey\n2. Create a new API key\n3. Replace the API key in lib/main.dart\n4. Restart the app\n\nCurrent error: ${e.toString()}',
+        text:
+            '🔑 Invalid API Key detected!\n\nTo fix this:\n1. Go to https://aistudio.google.com/app/apikey\n2. Create a new API key\n3. Replace the API key in lib/main.dart\n4. Restart the app\n\nCurrent error: ${e.toString()}',
         isSender: false,
       );
     } else {
@@ -58,9 +64,10 @@ Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
     final temperature = SettingsService.temperature;
     final maxTokens = SettingsService.maxTokens;
     final selectedModel = SettingsService.selectedModel;
-    
+
     const headers = {'Content-Type': 'application/json'};
-    final url = "https://generativelanguage.googleapis.com/v1beta/models/$selectedModel:generateContent?key=$apiKey";
+    final url =
+        "https://generativelanguage.googleapis.com/v1beta/models/$selectedModel:generateContent?key=$apiKey";
 
     var body = {
       "contents": [
@@ -82,7 +89,7 @@ Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
           "threshold": "BLOCK_MEDIUM_AND_ABOVE"
         },
         {
-          "category": "HARM_CATEGORY_HATE_SPEECH", 
+          "category": "HARM_CATEGORY_HATE_SPEECH",
           "threshold": "BLOCK_MEDIUM_AND_ABOVE"
         },
         {
@@ -98,27 +105,23 @@ Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
 
     log('Making HTTP request to Gemini API');
     log('Request URL: $url');
-    
-    final response = await http.post(
-      Uri.parse(url), 
-      headers: headers, 
-      body: jsonEncode(body)
-    );
+
+    final response = await http.post(Uri.parse(url),
+        headers: headers, body: jsonEncode(body));
 
     log('HTTP Response status: ${response.statusCode}');
-    
+
     if (response.statusCode == 200) {
       var result = jsonDecode(response.body);
       log('Successful response received');
-      
-      if (result["candidates"] != null && 
+
+      if (result["candidates"] != null &&
           result["candidates"].isNotEmpty &&
           result["candidates"][0]['content'] != null &&
           result["candidates"][0]['content']['parts'] != null &&
           result["candidates"][0]['content']['parts'].isNotEmpty) {
-        
         var output = result["candidates"][0]['content']['parts'][0]['text'];
-        
+
         return ChatModel(
           user: geminiUser,
           createAt: DateTime.now(),
@@ -136,20 +139,22 @@ Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
     } else if (response.statusCode == 400) {
       log('API Error 400: ${response.body}');
       final errorBody = jsonDecode(response.body);
-      if (errorBody['error'] != null && 
+      if (errorBody['error'] != null &&
           errorBody['error']['message'] != null &&
           errorBody['error']['message'].toString().contains('API key')) {
         return ChatModel(
           user: geminiUser,
           createAt: DateTime.now(),
-          text: '🔑 Invalid API Key!\n\nTo fix this:\n1. Go to https://aistudio.google.com/app/apikey\n2. Create a new API key\n3. Replace the API key in lib/main.dart\n4. Restart the app\n\nError: ${errorBody['error']['message']}',
+          text:
+              '🔑 Invalid API Key!\n\nTo fix this:\n1. Go to https://aistudio.google.com/app/apikey\n2. Create a new API key\n3. Replace the API key in lib/main.dart\n4. Restart the app\n\nError: ${errorBody['error']['message']}',
           isSender: false,
         );
       }
       return ChatModel(
         user: geminiUser,
         createAt: DateTime.now(),
-        text: 'API Error (400): ${errorBody['error']?['message'] ?? response.body}',
+        text:
+            'API Error (400): ${errorBody['error']?['message'] ?? response.body}',
         isSender: false,
       );
     } else if (response.statusCode == 404) {
@@ -157,7 +162,32 @@ Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
       return ChatModel(
         user: geminiUser,
         createAt: DateTime.now(),
-        text: '🚫 API Endpoint Not Found (404)\n\nThis might be due to:\n1. Invalid API key\n2. Incorrect API endpoint\n3. Service temporarily unavailable\n\nPlease:\n1. Check your API key at https://aistudio.google.com/app/apikey\n2. Ensure the API key has proper permissions\n3. Try again later if the service is down',
+        text:
+            '🚫 API Endpoint Not Found (404)\n\nThis might be due to:\n1. Invalid API key\n2. Incorrect API endpoint\n3. Service temporarily unavailable\n\nPlease:\n1. Check your API key at https://aistudio.google.com/app/apikey\n2. Ensure the API key has proper permissions\n3. Try again later if the service is down',
+        isSender: false,
+      );
+    } else if (response.statusCode == 429) {
+      log('API Error 429: ${response.body}');
+      final errorBody = jsonDecode(response.body);
+      String retryMessage = '';
+
+      // Extract retry delay if available
+      if (errorBody['error'] != null && errorBody['error']['details'] != null) {
+        for (var detail in errorBody['error']['details']) {
+          if (detail['@type'] == 'type.googleapis.com/google.rpc.RetryInfo' &&
+              detail['retryDelay'] != null) {
+            retryMessage =
+                '\n\n⏱️ Please wait ${detail['retryDelay']} before trying again.';
+            break;
+          }
+        }
+      }
+
+      return ChatModel(
+        user: geminiUser,
+        createAt: DateTime.now(),
+        text:
+            '⚠️ Rate Limit Exceeded (429)\n\nYou\'ve exceeded the API rate limit for the current model.\n\nTo fix this:\n1. Wait a moment before sending another message$retryMessage\n2. Switch to a different model in Settings (try gemini-1.5-flash)\n3. Check your usage at https://ai.dev/usage\n4. Consider upgrading your plan for higher limits\n\nTip: The free tier has limited requests per minute.',
         isSender: false,
       );
     } else {
@@ -174,7 +204,8 @@ Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
     return ChatModel(
       user: geminiUser,
       createAt: DateTime.now(),
-      text: 'Network error: ${e.toString()}. Please check your internet connection and API key.',
+      text:
+          'Network error: ${e.toString()}. Please check your internet connection and API key.',
       isSender: false,
     );
   }
@@ -183,7 +214,7 @@ Future<ChatModel> getdataHttp(ChatModel message, User geminiUser) async {
 Future<ChatModel> sendImageData(ChatModel message, User geminiUser) async {
   try {
     log('Attempting to send image with text to Gemini: ${message.text}');
-    
+
     if (message.file == null) {
       return ChatModel(
         text: 'No image file provided',
@@ -196,14 +227,18 @@ Future<ChatModel> sendImageData(ChatModel message, User geminiUser) async {
     // First try flutter_gemini
     final gemini = Gemini.instance;
     final response = await gemini.textAndImage(
-      text: message.text.isEmpty ? "What do you see in this image?" : message.text,
-      images: [message.file!.readAsBytesSync()]
-    );
+        text: message.text.isEmpty
+            ? "What do you see in this image?"
+            : message.text,
+        images: [message.file!.readAsBytesSync()]);
 
-    if (response != null && response.content != null && response.content!.parts != null) {
-      final responseText = response.content!.parts!.first.text ?? 'No response received for image';
+    if (response != null &&
+        response.content != null &&
+        response.content!.parts != null) {
+      final responseText = response.content!.parts!.first.text ??
+          'No response received for image';
       log('Gemini image response received successfully');
-      
+
       return ChatModel(
         text: responseText,
         user: geminiUser,
@@ -221,25 +256,30 @@ Future<ChatModel> sendImageData(ChatModel message, User geminiUser) async {
     }
   } catch (e) {
     log('Error processing image with Gemini: $e');
-    
+
     // Handle specific error types
-    if (e.toString().contains('404') || e.toString().contains('validateStatus')) {
+    if (e.toString().contains('404') ||
+        e.toString().contains('validateStatus')) {
       return ChatModel(
-        text: '🚫 Image API Error (404)\n\nThis might be due to:\n1. Invalid API key\n2. Image processing service unavailable\n3. Incorrect API endpoint\n\nPlease check your API key at https://aistudio.google.com/app/apikey',
+        text:
+            '🚫 Image API Error (404)\n\nThis might be due to:\n1. Invalid API key\n2. Image processing service unavailable\n3. Incorrect API endpoint\n\nPlease check your API key at https://aistudio.google.com/app/apikey',
         user: geminiUser,
         createAt: DateTime.now(),
         isSender: false,
       );
-    } else if (e.toString().contains('API key') || e.toString().contains('INVALID_ARGUMENT')) {
+    } else if (e.toString().contains('API key') ||
+        e.toString().contains('INVALID_ARGUMENT')) {
       return ChatModel(
-        text: '🔑 Invalid API Key for Image Processing!\n\nTo fix this:\n1. Go to https://aistudio.google.com/app/apikey\n2. Create a new API key\n3. Replace the API key in lib/main.dart\n4. Restart the app',
+        text:
+            '🔑 Invalid API Key for Image Processing!\n\nTo fix this:\n1. Go to https://aistudio.google.com/app/apikey\n2. Create a new API key\n3. Replace the API key in lib/main.dart\n4. Restart the app',
         user: geminiUser,
         createAt: DateTime.now(),
         isSender: false,
       );
     } else {
       return ChatModel(
-        text: 'Error processing image: ${e.toString()}. Please try again with a different image or check your API key.',
+        text:
+            'Error processing image: ${e.toString()}. Please try again with a different image or check your API key.',
         user: geminiUser,
         createAt: DateTime.now(),
         isSender: false,

@@ -19,18 +19,19 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   late final TextEditingController _apiKeyController;
   bool _obscure = true;
-  
+
   // Settings state - only functional settings
   double _textScale = 1.0;
   bool _showTimestamps = true;
   double _temperature = 0.7;
   int _maxTokens = 2048;
-  String _selectedModel = 'gemini-1.5-flash';
+  String _selectedModel = 'gemini-2.5-flash';
 
   @override
   void initState() {
     super.initState();
-    _apiKeyController = TextEditingController(text: SettingsService.apiKey ?? '');
+    _apiKeyController =
+        TextEditingController(text: SettingsService.apiKey ?? '');
     _loadSettings();
   }
 
@@ -80,7 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void _showModernChip(String message, IconData icon, Color color) {
     final overlay = Overlay.of(context);
     late OverlayEntry overlayEntry;
-    
+
     overlayEntry = OverlayEntry(
       builder: (context) => _ModernChipNotification(
         message: message,
@@ -89,9 +90,9 @@ class _SettingsPageState extends State<SettingsPage> {
         onDismiss: () => overlayEntry.remove(),
       ),
     );
-    
+
     overlay.insert(overlayEntry);
-    
+
     // Auto-dismiss after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (overlayEntry.mounted) {
@@ -123,21 +124,24 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _saveApiKey() async {
     final key = _apiKeyController.text.trim();
     if (key.isEmpty) {
-      _showModernChip('Please enter a valid API key', Icons.error_rounded, Colors.orange);
+      _showModernChip(
+          'Please enter a valid API key', Icons.error_rounded, Colors.orange);
       return;
     }
     SettingsService.apiKey = key;
     // Re-init Gemini with the new key
     Gemini.init(apiKey: key);
     if (!mounted) return;
-    _showModernChip('API key saved successfully', Icons.key_rounded, Colors.blue);
+    _showModernChip(
+        'API key saved successfully', Icons.key_rounded, Colors.blue);
   }
 
   Future<void> _clearApiKey() async {
     SettingsService.apiKey = null;
     _apiKeyController.clear();
     if (!mounted) return;
-    _showModernChip('API key cleared. Using default', Icons.refresh_rounded, Colors.purple);
+    _showModernChip(
+        'API key cleared. Using default', Icons.refresh_rounded, Colors.purple);
   }
 
   @override
@@ -177,9 +181,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
           ),
-          
           const SizedBox(height: 24),
-          
           _buildSection(
             'Chat Behavior',
             'Configure AI responses and interactions',
@@ -189,7 +191,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 'Choose the Gemini model to use',
                 Icons.psychology_rounded,
                 _selectedModel,
-                ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'],
+                [
+                  'gemini-2.5-flash',
+                  'gemini-1.5-flash',
+                  'gemini-1.5-pro',
+                  'gemini-2.0-flash-exp',
+                  'gemini-pro'
+                ],
                 (value) {
                   setState(() => _selectedModel = value!);
                   _saveSetting('selectedModel', value);
@@ -205,8 +213,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   setState(() => _temperature = value);
                   _saveSetting('temperature', value);
                 },
-                valueDisplay: _temperature < 0.3 ? 'Precise' : 
-                            _temperature < 0.7 ? 'Balanced' : 'Creative',
+                valueDisplay: _temperature < 0.3
+                    ? 'Precise'
+                    : _temperature < 0.7
+                        ? 'Balanced'
+                        : 'Creative',
               ),
               _buildSliderTile(
                 'Response Length',
@@ -233,9 +244,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
           ),
-          
           const SizedBox(height: 24),
-          
           _buildSection(
             'API Configuration',
             'Manage your Gemini API settings',
@@ -243,9 +252,7 @@ class _SettingsPageState extends State<SettingsPage> {
               _buildApiKeySection(),
             ],
           ),
-          
           const SizedBox(height: 24),
-          
           _buildSection(
             'Data Management',
             'Control your chat data',
@@ -259,9 +266,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
           ),
-          
           const SizedBox(height: 24),
-          
           _buildSection(
             'About',
             'App information',
@@ -275,7 +280,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
           ),
-          
           const SizedBox(height: 32),
         ],
       ),
@@ -442,11 +446,15 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500),
+                      style: GoogleFonts.inter(
+                          fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                     Text(
                       subtitle,
-                      style: GoogleFonts.inter(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -454,7 +462,8 @@ class _SettingsPageState extends State<SettingsPage> {
               if (valueDisplay != null)
                 Text(
                   valueDisplay,
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.inter(
+                      fontSize: 12, fontWeight: FontWeight.w500),
                 ),
             ],
           ),
@@ -505,7 +514,8 @@ class _SettingsPageState extends State<SettingsPage> {
         value: value,
         onChanged: onChanged,
         underline: const SizedBox(),
-        style: GoogleFonts.inter(fontSize: 12, color: Theme.of(context).colorScheme.onSurface),
+        style: GoogleFonts.inter(
+            fontSize: 12, color: Theme.of(context).colorScheme.onSurface),
         items: options.map((option) {
           return DropdownMenuItem(
             value: option,
@@ -588,13 +598,19 @@ class _SettingsPageState extends State<SettingsPage> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .outline
+                      .withValues(alpha: 0.3),
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .outline
+                      .withValues(alpha: 0.3),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -652,15 +668,17 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _testApiKey() async {
     final key = _apiKeyController.text.trim();
     if (key.isEmpty) {
-      _showModernChip('Please enter an API key first', Icons.warning_rounded, Colors.orange);
+      _showModernChip('Please enter an API key first', Icons.warning_rounded,
+          Colors.orange);
       return;
     }
-    
+
     // Simple test - try to initialize Gemini with the key
     try {
       Gemini.init(apiKey: key);
       if (!mounted) return;
-      _showModernChip('API key is valid and working', Icons.verified_rounded, Colors.green);
+      _showModernChip(
+          'API key is valid and working', Icons.verified_rounded, Colors.green);
     } catch (e) {
       if (!mounted) return;
       _showModernChip('API key test failed', Icons.error_rounded, Colors.red);
@@ -672,7 +690,8 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Clear All Chats'),
-        content: const Text('Are you sure you want to delete all conversation history? This action cannot be undone.'),
+        content: const Text(
+            'Are you sure you want to delete all conversation history? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -683,7 +702,8 @@ class _SettingsPageState extends State<SettingsPage> {
               // Clear chat data from Hive
               Hive.box(boxName).clear();
               Navigator.pop(context);
-              _showModernChip('All chats cleared successfully', Icons.delete_sweep_rounded, Colors.red);
+              _showModernChip('All chats cleared successfully',
+                  Icons.delete_sweep_rounded, Colors.red);
             },
             child: const Text('Clear'),
           ),
@@ -707,7 +727,8 @@ class _ModernChipNotification extends StatefulWidget {
   });
 
   @override
-  State<_ModernChipNotification> createState() => _ModernChipNotificationState();
+  State<_ModernChipNotification> createState() =>
+      _ModernChipNotificationState();
 }
 
 class _ModernChipNotificationState extends State<_ModernChipNotification>
@@ -771,7 +792,8 @@ class _ModernChipNotificationState extends State<_ModernChipNotification>
             child: GestureDetector(
               onTap: _dismiss,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [
